@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import org.atlaslabs.newsbeuterspread.R;
 import org.atlaslabs.newsbeuterspread.databinding.ActivityMainBinding;
@@ -35,9 +39,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.button.setOnClickListener(v -> {
-            startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_SETTINGS);
-        });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         binding.itemsList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -67,6 +70,24 @@ public class MainActivity extends AppCompatActivity {
                     updateAPI();
                 }
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_SETTINGS);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
