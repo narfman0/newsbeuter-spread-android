@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import org.atlaslabs.newsbeuterspread.R;
@@ -31,9 +34,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Item item = items.get(position);
         holder.binding.itemAuthor.setText(item.author);
-        holder.binding.itemContent.setText(item.content);
+        holder.binding.itemContent.setVisibility(TextUtils.isEmpty(item.content) ? View.GONE : View.VISIBLE);
+        holder.binding.itemContent.loadData(item.content, "text/html", "utf-8");
         holder.binding.itemDate.setText(item.pub_date);
         holder.binding.itemTitleView.setText(item.title);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            holder.binding.itemLinkButton.setTooltipText(item.url);
         holder.binding.itemLinkButton.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
             if(activity.get() != null)
