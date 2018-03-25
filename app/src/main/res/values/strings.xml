@@ -3,11 +3,12 @@
     <string name="action_save">Save</string>
     <string name="action_settings">Settings</string>
     <string name="app_name">Newsbeuter Spread</string>
-    <string name="save_button_text">Save</string>
     <string name="base_url_default">http://greeny:5000</string>
     <string name="base_url_text">Base URL: </string>
     <string name="base_url_tooltip">Base URL for newsbeuter spread</string>
-    <string name="settings_button_text">Settings</string>
+    <string name="caught_up_text">All Caught Up!</string>
     <string name="item_link_text">Link</string>
     <string name="item_read_text">Mark Read</string>
+    <string name="save_button_text">Save</string>
+    <string name="settings_button_text">Settings</string>
 </resources>

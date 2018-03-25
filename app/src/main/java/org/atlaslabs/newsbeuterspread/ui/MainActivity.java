@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.atlaslabs.newsbeuterspread.R;
 import org.atlaslabs.newsbeuterspread.databinding.ActivityMainBinding;
@@ -59,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
+                    if(response.items.isEmpty()){
+                        binding.itemsList.setVisibility(View.GONE);
+                        binding.itemsCaughtUp.setVisibility(View.VISIBLE);
+                    }else{
+                        binding.itemsList.setVisibility(View.VISIBLE);
+                        binding.itemsCaughtUp.setVisibility(View.GONE);
+                    }
                     loadItems(response.items);
                     binding.itemsRefresh.setRefreshing(false);
                 });
