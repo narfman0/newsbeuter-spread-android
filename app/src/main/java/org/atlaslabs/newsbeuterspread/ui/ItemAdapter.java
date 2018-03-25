@@ -50,7 +50,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 activity.get().getAPI().markRead(item.id)
                         .subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(response -> remove(item));
+                        .subscribe(response -> {
+                            remove(item);
+                            if(items.isEmpty())
+                                activity.get().updateAPI();
+                        });
         });
     }
 

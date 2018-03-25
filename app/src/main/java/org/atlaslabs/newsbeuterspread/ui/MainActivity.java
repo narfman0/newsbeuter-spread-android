@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateAPI(){
+    public void updateAPI(){
         binding.itemsRefresh.setRefreshing(true);
         api = RestUtil.createAPI(baseURL);
         api.getUnread()
