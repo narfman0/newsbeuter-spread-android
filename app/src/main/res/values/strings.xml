@@ -7,6 +7,7 @@
     <string name="base_url_text">Base URL: </string>
     <string name="base_url_tooltip">Base URL for newsbeuter spread</string>
     <string name="caught_up_text">All Caught Up!</string>
+    <string name="js_enable_text">Enable javascript</string>
     <string name="item_link_text">Link</string>
     <string name="item_read_text">Mark Read</string>
     <string name="save_button_text">Save</string>

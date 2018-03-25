@@ -1,5 +1,6 @@
 package org.atlaslabs.newsbeuterspread.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -21,13 +22,19 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_JS_ENABLE;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
+
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
-    private WeakReference<MainActivity> activity;
-    private List<Item> items;
+    private final WeakReference<MainActivity> activity;
+    private final List<Item> items;
+    private final boolean jsEnabled;
 
     public ItemAdapter(MainActivity activity, List<Item> items) {
         this.activity = new WeakReference<>(activity);
         this.items = items;
+        jsEnabled = activity.getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE)
+                .getBoolean(PREFERENCE_JS_ENABLE.name(), false);
     }
 
     @Override
@@ -36,6 +43,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.binding.itemAuthor.setText(item.author);
         holder.binding.itemContent.setVisibility(TextUtils.isEmpty(item.content) ? View.GONE : View.VISIBLE);
         holder.binding.itemContent.loadData(item.content, "text/html", "utf-8");
+        holder.binding.itemContent.getSettings().setJavaScriptEnabled(jsEnabled);
         holder.binding.itemDate.setText(item.pub_date);
         holder.binding.itemTitleView.setText(item.title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)

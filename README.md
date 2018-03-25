@@ -8,10 +8,6 @@ Android front end client for the VERY POPULAR AND SUCCESSFUL [newsbeuter-spread]
 * Navigate to settings and change url to your self hosted newsbeuter-spread instance
 * Optional: ensure tunnel is secured, possibly via https or ssh proxied
 
-## TODO
-
-* Add javascript setting
-
 ## License
 
 Copyright 2018 Atlas Labs LLC

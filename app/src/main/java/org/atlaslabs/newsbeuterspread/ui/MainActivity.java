@@ -2,6 +2,7 @@ package org.atlaslabs.newsbeuterspread.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_BASE_URL;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_JS_ENABLE;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NewsbeuterSpreadAPI api = null;
     private String baseURL;
+    private boolean jsEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         binding.itemsRefresh.setOnRefreshListener(this::updateAPI);
 
         // update items list
-        if(getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE).contains(PREFERENCE_BASE_URL.name())) {
-            baseURL = getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE).getString(PREFERENCE_BASE_URL.name(), null);
+        SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE);
+        jsEnabled = preferences.getBoolean(PREFERENCE_JS_ENABLE.name(), false);
+        if(preferences.contains(PREFERENCE_BASE_URL.name())) {
+            baseURL = preferences.getString(PREFERENCE_BASE_URL.name(), null);
             updateAPI();
         }
     }
@@ -77,9 +82,11 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
                 String currentBaseURL = data.getStringExtra(PREFERENCE_BASE_URL.name());
+                boolean currentJSEnabled = data.getBooleanExtra(PREFERENCE_JS_ENABLE.name(), false);
                 // if the user updated the url, fetch list!
-                if(!TextUtils.equals(currentBaseURL, baseURL)) {
+                if(!TextUtils.equals(currentBaseURL, baseURL) || currentJSEnabled != jsEnabled) {
                     baseURL = currentBaseURL;
+                    jsEnabled = currentJSEnabled;
                     updateAPI();
                 }
             }
