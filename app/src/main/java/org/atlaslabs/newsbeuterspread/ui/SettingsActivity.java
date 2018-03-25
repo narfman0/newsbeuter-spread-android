@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                String baseURL = binding.editText.getText().toString();
+                String baseURL = binding.baseURLText.getText().toString();
                 getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE).edit()
                         .putString(Setting.PREFERENCE_BASE_URL.name(), baseURL)
                         .apply();

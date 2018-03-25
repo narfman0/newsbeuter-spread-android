@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         binding.itemsList.setLayoutManager(new LinearLayoutManager(this));
+        binding.itemsRefresh.setOnRefreshListener(this::updateAPI);
 
         // update items list
         if(getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE).contains(PREFERENCE_BASE_URL.name())) {
@@ -52,11 +53,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateAPI(){
+        binding.itemsRefresh.setRefreshing(true);
         api = RestUtil.createAPI(baseURL);
         api.getUnread()
                 .subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> loadItems(response.items));
+                .subscribe(response -> {
+                    loadItems(response.items);
+                    binding.itemsRefresh.setRefreshing(false);
+                });
     }
 
     @Override
@@ -83,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_refresh:
+                updateAPI();
+                return true;
             case R.id.action_settings:
                 startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_SETTINGS);
                 return true;
