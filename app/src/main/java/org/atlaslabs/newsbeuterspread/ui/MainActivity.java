@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.atlaslabs.newsbeuterspread.R;
 import org.atlaslabs.newsbeuterspread.databinding.ActivityMainBinding;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_BASE_URL;
@@ -34,6 +36,7 @@ import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERE
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SETTINGS = 1;
+    private CompositeDisposable disposable;
     private ActivityMainBinding binding;
     private NewsbeuterSpreadAPI api = null;
     private String baseURL;
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        disposable = new CompositeDisposable();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -58,10 +62,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy(){
+        disposable.dispose();
+        super.onDestroy();
+    }
+
     public void updateAPI(){
         binding.itemsRefresh.setRefreshing(true);
         api = RestUtil.createAPI(baseURL);
-        api.getUnread()
+        disposable.add(api.getUnread()
                 .subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -74,7 +84,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     loadItems(response.items);
                     binding.itemsRefresh.setRefreshing(false);
-                });
+                }, e -> {
+                    String text = "An error has occurred fetching unread: " + e;
+                    Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT)
+                            .show();
+                }));
     }
 
     @Override

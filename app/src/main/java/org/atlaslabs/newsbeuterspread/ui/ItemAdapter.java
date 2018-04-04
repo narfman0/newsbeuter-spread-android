@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.atlaslabs.newsbeuterspread.R;
 import org.atlaslabs.newsbeuterspread.databinding.ViewItemBinding;
@@ -54,14 +55,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 activity.get().startActivity(browserIntent);
         });
         holder.binding.itemReadButton.setOnClickListener(v -> {
-            if(activity.get() != null)
+            if(activity.get() != null && activity.get().getAPI() != null)
                 activity.get().getAPI().markRead(item.id)
                         .subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(response -> {
+                            if(activity.get() == null)
+                                return;
                             remove(item);
                             if(items.isEmpty())
                                 activity.get().updateAPI();
+                        }, e -> {
+                            if(activity.get() != null) {
+                                String text = "An error has occurred marking as read: " + e;
+                                Toast.makeText(activity.get(), text, Toast.LENGTH_SHORT).show();
+                            }
                         });
         });
     }
