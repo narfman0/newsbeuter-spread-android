@@ -6,8 +6,10 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +29,12 @@ import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERE
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
+    private static final String TAG = ItemAdapter.class.getSimpleName();
     private final WeakReference<MainActivity> activity;
     private final List<Item> items;
     private final boolean jsEnabled;
 
-    public ItemAdapter(MainActivity activity, List<Item> items) {
+    public ItemAdapter(MainActivity activity, @NonNull List<Item> items) {
         this.activity = new WeakReference<>(activity);
         this.items = items;
         jsEnabled = activity.getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE)
@@ -83,8 +86,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private void remove(Item item){
         int index = items.indexOf(item);
-        items.remove(index);
-        notifyItemRemoved(index);
+        if(index != -1) {
+            items.remove(index);
+            notifyItemRemoved(index);
+        }else
+            Log.w(TAG, "Attempting to remove item not in list: " + item);
     }
 
     @Override
