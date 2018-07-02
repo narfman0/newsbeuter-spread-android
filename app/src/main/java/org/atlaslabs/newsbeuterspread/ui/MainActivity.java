@@ -17,11 +17,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.jcraft.jsch.Session;
+
 import org.atlaslabs.newsbeuterspread.R;
 import org.atlaslabs.newsbeuterspread.databinding.ActivityMainBinding;
 import org.atlaslabs.newsbeuterspread.models.Item;
 import org.atlaslabs.newsbeuterspread.network.NewsbeuterSpreadAPI;
 import org.atlaslabs.newsbeuterspread.network.RestUtil;
+import org.atlaslabs.newsbeuterspread.network.SSHUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,10 @@ import io.reactivex.schedulers.Schedulers;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_BASE_URL;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_JS_ENABLE;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_SSH_ENABLE;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_SSH_HOST;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_SSH_PASSWORD;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_SSH_USERNAME;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SETTINGS = 1;
@@ -40,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NewsbeuterSpreadAPI api = null;
     private String baseURL;
-    private boolean jsEnabled;
+    private boolean jsEnabled, sshEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         // update items list
         SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE);
         jsEnabled = preferences.getBoolean(PREFERENCE_JS_ENABLE.name(), false);
+        sshEnabled = preferences.getBoolean(PREFERENCE_SSH_ENABLE.name(), false);
         if(preferences.contains(PREFERENCE_BASE_URL.name())) {
             baseURL = preferences.getString(PREFERENCE_BASE_URL.name(), null);
             updateAPI();
@@ -73,6 +81,30 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Base URL null, please update in settings!",
                     Toast.LENGTH_SHORT).show();
             return;
+        }
+        if(sshEnabled) {
+            SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE);
+            String host = preferences.getString(PREFERENCE_SSH_HOST.name(), null);
+            String user = preferences.getString(PREFERENCE_SSH_USERNAME.name(), null);
+            String pass = preferences.getString(PREFERENCE_SSH_PASSWORD.name(), null);
+            try {
+                Schedulers.newThread().scheduleDirect(() -> {
+                    try {
+                        disposable.add(SSHUtil.connect(getApplicationContext(), host, user, pass));
+                    }catch (Exception e){
+                        Toast.makeText(getApplicationContext(),
+                                "Failed to establish ssh connection with error: " +
+                                        e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                });
+            }catch (Exception e){
+                Toast.makeText(getApplicationContext(),
+                        "Failed to establish ssh connection with error: " +
+                                e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            }
         }
         binding.itemsRefresh.setRefreshing(true);
         api = RestUtil.createAPI(baseURL);
@@ -102,10 +134,13 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String currentBaseURL = data.getStringExtra(PREFERENCE_BASE_URL.name());
                 boolean currentJSEnabled = data.getBooleanExtra(PREFERENCE_JS_ENABLE.name(), false);
+                boolean currentSSHEnabled = data.getBooleanExtra(PREFERENCE_SSH_ENABLE.name(), false);
                 // if the user updated the url, fetch list!
-                if(!TextUtils.equals(currentBaseURL, baseURL) || currentJSEnabled != jsEnabled) {
+                if(!TextUtils.equals(currentBaseURL, baseURL) || currentJSEnabled != jsEnabled ||
+                        currentSSHEnabled != sshEnabled) {
                     baseURL = currentBaseURL;
                     jsEnabled = currentJSEnabled;
+                    sshEnabled = currentSSHEnabled;
                     updateAPI();
                 }
             }
