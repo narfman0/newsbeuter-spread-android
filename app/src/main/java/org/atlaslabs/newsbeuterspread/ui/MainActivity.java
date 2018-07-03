@@ -69,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateAPI(){
+        if(baseURL == null){
+            Toast.makeText(getApplicationContext(), "Base URL null, please update in settings!",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         binding.itemsRefresh.setRefreshing(true);
         api = RestUtil.createAPI(baseURL);
         disposable.add(api.getUnread()
