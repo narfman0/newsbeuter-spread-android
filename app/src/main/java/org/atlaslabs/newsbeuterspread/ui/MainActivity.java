@@ -33,13 +33,15 @@ import io.reactivex.schedulers.Schedulers;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_BASE_URL;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_JS_ENABLE;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_PASSWORD;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_USERNAME;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SETTINGS = 1;
     private CompositeDisposable disposable;
     private ActivityMainBinding binding;
     private NewsbeuterSpreadAPI api = null;
-    private String baseURL;
+    private String baseURL, username, password;
     private boolean jsEnabled;
 
     @Override
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         jsEnabled = preferences.getBoolean(PREFERENCE_JS_ENABLE.name(), false);
         if(preferences.contains(PREFERENCE_BASE_URL.name())) {
             baseURL = preferences.getString(PREFERENCE_BASE_URL.name(), null);
+            username = preferences.getString(PREFERENCE_USERNAME.name(), null);
+            password = preferences.getString(PREFERENCE_PASSWORD.name(), null);
             updateAPI();
         }
     }
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         binding.itemsRefresh.setRefreshing(true);
-        api = RestUtil.createAPI(baseURL);
+        api = RestUtil.createAPI(baseURL, username, password);
         disposable.add(api.getUnread()
                 .subscribeOn(Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR))
                 .observeOn(AndroidSchedulers.mainThread())

@@ -10,6 +10,8 @@
     <string name="js_enable_text">Enable javascript</string>
     <string name="item_link_text">Link</string>
     <string name="item_read_text">Mark Read</string>
+    <string name="password_text">Password</string>
     <string name="save_button_text">Save</string>
     <string name="settings_button_text">Settings</string>
+    <string name="username_text">Username</string>
 </resources>
