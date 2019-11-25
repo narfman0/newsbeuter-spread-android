@@ -27,25 +27,28 @@ import io.reactivex.schedulers.Schedulers;
 
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_JS_ENABLE;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_SHOW_BODY;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private static final String TAG = ItemAdapter.class.getSimpleName();
     private final WeakReference<MainActivity> activity;
     private final List<Item> items;
-    private final boolean jsEnabled;
+    private final boolean jsEnabled, showBody;
 
     public ItemAdapter(MainActivity activity, @NonNull List<Item> items) {
         this.activity = new WeakReference<>(activity);
         this.items = items;
         jsEnabled = activity.getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE)
                 .getBoolean(PREFERENCE_JS_ENABLE.name(), false);
+        showBody = activity.getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE)
+                .getBoolean(PREFERENCE_SHOW_BODY.name(), false);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Item item = items.get(position);
         holder.binding.itemAuthor.setText(item.author);
-        holder.binding.itemContent.setVisibility(TextUtils.isEmpty(item.content) ? View.GONE : View.VISIBLE);
+        holder.binding.itemContent.setVisibility(TextUtils.isEmpty(item.content) || !showBody ? View.GONE : View.VISIBLE);
         holder.binding.itemContent.loadData(item.content, "text/html", "utf-8");
         holder.binding.itemContent.getSettings().setJavaScriptEnabled(jsEnabled);
         holder.binding.itemDate.setText(item.pub_date);

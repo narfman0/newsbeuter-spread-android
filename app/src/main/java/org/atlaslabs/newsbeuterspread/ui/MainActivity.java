@@ -34,6 +34,7 @@ import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERE
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_JS_ENABLE;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_NAME;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_PASSWORD;
+import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_SHOW_BODY;
 import static org.atlaslabs.newsbeuterspread.ui.SettingsActivity.Setting.PREFERENCE_USERNAME;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NewsbeuterSpreadAPI api = null;
     private String baseURL, username, password;
-    private boolean jsEnabled;
+    private boolean jsEnabled, showBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         // update items list
         SharedPreferences preferences = getSharedPreferences(PREFERENCE_NAME.name(), Context.MODE_PRIVATE);
         jsEnabled = preferences.getBoolean(PREFERENCE_JS_ENABLE.name(), false);
+        showBody = preferences.getBoolean(PREFERENCE_SHOW_BODY.name(), false);
         if(preferences.contains(PREFERENCE_BASE_URL.name())) {
             baseURL = preferences.getString(PREFERENCE_BASE_URL.name(), null);
             username = preferences.getString(PREFERENCE_USERNAME.name(), null);

@@ -47,7 +47,6 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
             app:layout_constraintVertical_bias="0.0" />
 
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -81,6 +80,33 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:gravity="center_vertical"
+            android:text="@string/show_body_text"
+            app:layout_constraintBottom_toBottomOf="@+id/showBodyCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/toolbar"
+            app:layout_constraintTop_toTopOf="@+id/showBodyCheckbox"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <CheckBox
+            android:id="@+id/showBodyCheckbox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/jsEnableCheckbox"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
             android:text="@string/username_text"
             app:layout_constraintBottom_toBottomOf="@+id/usernameText"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -99,7 +125,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/jsEnableCheckbox"
+            app:layout_constraintTop_toBottomOf="@+id/showBodyCheckbox"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
